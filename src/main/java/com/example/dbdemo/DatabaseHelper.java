@@ -2,10 +2,7 @@ package com.example.dbdemo;
 
 import org.sqlite.JDBC;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class DatabaseHelper {
 
@@ -42,7 +39,12 @@ public class DatabaseHelper {
     }
 
     private static boolean checkConnection() {
-        return connect() != null;
+        Connection connection = connect();
+        if (connection != null) {
+            System.out.println("Database connected successfully!");
+            return true;
+        }
+        return false;
     }
 
     private static boolean checkTables() {
@@ -64,6 +66,9 @@ public class DatabaseHelper {
                         return true;
                     }
                 }
+                System.out.println("Table not found!");
+                //Ensure that the table exists
+                return createTable(connection);
             }
         } catch (Exception e) {
             System.out.println("Couldn't find table. Reason:" + e.getMessage());
@@ -71,12 +76,35 @@ public class DatabaseHelper {
         return false;
     }
 
+    private static boolean createTable(Connection connection) {
+        //1. Prepare a query to create a table
+        String createTableQuery = """
+                CREATE TABLE test_tbl (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(100)
+                );
+                """;
+
+        try {
+            if (connection == null) connection = connect();
+            if (connection != null) {
+                //2. Create SQL statement
+                Statement statement = connection.createStatement();
+                //3. Execute the statement
+                statement.execute(createTableQuery);
+                System.out.println("Table created successfully!");
+                return true;
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to create table. Reason: " + sqlException.getMessage());
+        }
+        return false;
+    }
+
     public static Connection connect() {
         String DB_PREFIX = "jdbc:sqlite:";
         try {
-            Connection connection = DriverManager.getConnection(DB_PREFIX + DATABASE_LOCATION);
-            System.out.println("Database connected successfully!");
-            return connection;
+            return DriverManager.getConnection(DB_PREFIX + DATABASE_LOCATION);
         } catch (Exception e) {
             System.out.println("Connection failed! Reason: " + e.getMessage());
         }
