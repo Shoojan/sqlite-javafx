@@ -4,6 +4,8 @@ import org.sqlite.JDBC;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class DatabaseHelper {
 
@@ -11,6 +13,21 @@ public class DatabaseHelper {
             = DatabaseHelper.class
             .getResource("/com/example/dbdemo/database/test_db.db")
             .toExternalForm();
+
+    public static boolean isDatabaseReady() {
+        boolean isDriverReady = checkDriver();
+        if (!isDriverReady) return false;
+
+        boolean isConnectionReady = checkConnection();
+        if (!isConnectionReady) return false;
+
+        boolean isTableReady = checkTables();
+        if (!isTableReady) return false;
+
+        return true;
+
+//        return checkDriver() && checkConnection() && checkTables();
+    }
 
     public static boolean checkDriver() {
         try {
@@ -24,6 +41,36 @@ public class DatabaseHelper {
         }
     }
 
+    private static boolean checkConnection() {
+        return connect() != null;
+    }
+
+    private static boolean checkTables() {
+        String requiredTable = "test_tbl";
+        String checkTableQuery = "SELECT DISTINCT tbl_name FROM sqlite_master";
+
+        try {
+            //Establish database connection
+            Connection connection = connect();
+            if (connection != null) {
+                //Prepare the statement
+                PreparedStatement preparedStatement = connection.prepareStatement(checkTableQuery);
+                //Execute it
+                ResultSet resultSet = preparedStatement.executeQuery();
+                //Grab it
+                while (resultSet.next()) {
+                    String tableName = resultSet.getString("tbl_name");
+                    if (tableName.equalsIgnoreCase(requiredTable)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Couldn't find table. Reason:" + e.getMessage());
+        }
+        return false;
+    }
+
     public static Connection connect() {
         String DB_PREFIX = "jdbc:sqlite:";
         try {
@@ -32,7 +79,7 @@ public class DatabaseHelper {
             return connection;
         } catch (Exception e) {
             System.out.println("Connection failed! Reason: " + e.getMessage());
-            return null;
         }
+        return null;
     }
 }
