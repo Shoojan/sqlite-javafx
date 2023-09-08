@@ -110,4 +110,30 @@ public class TestDAO {
 
         return null;
     }
+
+    public static boolean updateTestData(TestModel testDataToUpdate) {
+        try {
+            //        1. Create Connection
+            Connection connection = DatabaseHelper.connect();
+            if (connection != null) {
+                //        2. Prepare the Statement
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
+                preparedStatement.setString(1, testDataToUpdate.getName());
+                preparedStatement.setInt(1, testDataToUpdate.getId());
+
+                //        3. Execute the query
+                int affectedRows = preparedStatement.executeUpdate();
+
+                //        4. check the results
+                if (affectedRows > 0) {
+                    return true;
+                }
+                //return affectedRows > 0;
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Could not update data. Reason: " + sqlException.getMessage());
+        }
+
+        return false;
+    }
 }
