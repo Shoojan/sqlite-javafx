@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Sujan Maharjan | Sept 5, 2023
@@ -18,13 +20,13 @@ public class TestDAO {
 
     //READ
     private static String readAllQuery = "SELECT * FROM test_tbl";
-    private static String readOneQuery = "SELECT * FROM test_tbl WHERE id=%d";
+    private static String readOneQuery = "SELECT * FROM test_tbl WHERE id = ?";
 
     //UPDATE
-    private static String updateQuery = "UPDATE test_tbl SET name=%s WHERE id=%d";
+    private static String updateQuery = "UPDATE test_tbl SET name = ? WHERE id= ?";
 
     //DELETE
-    private String deleteQuery = "DELETE FROM test_tbl WHERE id=%d;";
+    private String deleteQuery = "DELETE FROM test_tbl WHERE id = ?;";
 
     public static int addData(String name) {
         try {
@@ -54,5 +56,58 @@ public class TestDAO {
             System.out.println("Failed to add data. Reason: " + sqlException.getMessage());
         }
         return -1;
+    }
+
+    public static List<TestModel> fetchAllTestData() {
+        List<TestModel> allTestData = new ArrayList<>();
+
+        try {
+            //        1. Create Connection
+            Connection connection = DatabaseHelper.connect();
+            if (connection != null) {
+                //        2. Prepare the Statement
+                PreparedStatement preparedStatement = connection.prepareStatement(readAllQuery);
+
+                //        3. Execute the query
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                //        4. Grab the results
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    TestModel testData = new TestModel(id, name);
+                    allTestData.add(testData);
+                }
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Could not fetch data. Reason: " + sqlException.getMessage());
+        }
+
+        return allTestData;
+    }
+
+    public static TestModel fetchSingleTestData(int id) {
+        try {
+            //        1. Create Connection
+            Connection connection = DatabaseHelper.connect();
+            if (connection != null) {
+                //        2. Prepare the Statement
+                PreparedStatement preparedStatement = connection.prepareStatement(readOneQuery);
+                preparedStatement.setInt(1, id);
+
+                //        3. Execute the query
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                //        4. Grab the results
+                if (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    return new TestModel(id, name);
+                }
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Could not fetch single data. Reason: " + sqlException.getMessage());
+        }
+
+        return null;
     }
 }
