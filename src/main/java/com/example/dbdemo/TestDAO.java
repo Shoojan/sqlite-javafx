@@ -26,7 +26,7 @@ public class TestDAO {
     private static String updateQuery = "UPDATE test_tbl SET name = ? WHERE id= ?";
 
     //DELETE
-    private String deleteQuery = "DELETE FROM test_tbl WHERE id = ?;";
+    private static String deleteQuery = "DELETE FROM test_tbl WHERE id = ?;";
 
     public static int addData(String name) {
         try {
@@ -136,4 +136,26 @@ public class TestDAO {
 
         return false;
     }
+
+    public static boolean deleteTestData(int id) {
+        try {
+            //        1. Create Connection
+            Connection connection = DatabaseHelper.connect();
+            if (connection != null) {
+                //        2. Prepare the Statement
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery);
+                preparedStatement.setInt(1, id);
+
+                //        3. Execute the query
+                int affectedRows = preparedStatement.executeUpdate();
+
+                //        4. check the results
+                return affectedRows > 0;
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Could not update data. Reason: " + sqlException.getMessage());
+        }
+        return false;
+    }
+
 }
