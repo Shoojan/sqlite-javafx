@@ -4,16 +4,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.2-ea" fx:controller="com.example.dbdemo.HelloController">
+<VBox alignment="CENTER" spacing="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.2-ea" fx:controller="com.example.dbdemo.HelloController">
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
    <HBox spacing="10.0">
       <children>
          <TextField promptText="Name" HBox.hgrow="ALWAYS" />
-        <Button onAction="#onHelloButtonClick" text="Add" />
+        <Button fx:id="addButton" onAction="#onAddBtnClicked" text="Add" />
       </children>
    </HBox>
+   <Button fx:id="viewButton" alignment="CENTER" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onViewBtnClicked" text="View" VBox.vgrow="ALWAYS" />
    <TableView>
      <columns>
        <TableColumn prefWidth="75.0" text="Id" />
