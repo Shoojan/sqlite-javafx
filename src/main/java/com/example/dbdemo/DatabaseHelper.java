@@ -50,10 +50,10 @@ public class DatabaseHelper {
     private static boolean checkTables() {
         String requiredTable = "test_tbl";
         String checkTableQuery = "SELECT DISTINCT tbl_name FROM sqlite_master";
-
+        Connection connection = null;
         try {
             //Establish database connection
-            Connection connection = connect();
+            connection = connect();
             if (connection != null) {
                 //Prepare the statement
                 PreparedStatement preparedStatement = connection.prepareStatement(checkTableQuery);
@@ -63,6 +63,7 @@ public class DatabaseHelper {
                 while (resultSet.next()) {
                     String tableName = resultSet.getString("tbl_name");
                     if (tableName.equalsIgnoreCase(requiredTable)) {
+                        System.out.println("All Tables set!");
                         return true;
                     }
                 }
@@ -72,6 +73,14 @@ public class DatabaseHelper {
             }
         } catch (Exception e) {
             System.out.println("Couldn't find table. Reason:" + e.getMessage());
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close(); // <-- This is important
+                } catch (SQLException e) {
+                    /* handle exception */
+                }
+            }
         }
         return false;
     }

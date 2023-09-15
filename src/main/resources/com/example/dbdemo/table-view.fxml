@@ -10,15 +10,15 @@
   </padding>
    <HBox spacing="10.0">
       <children>
-         <TextField promptText="Name" HBox.hgrow="ALWAYS" />
+         <TextField fx:id="nameTextField" promptText="Name" HBox.hgrow="ALWAYS" />
         <Button fx:id="addButton" onAction="#onAddBtnClicked" text="Add" />
       </children>
    </HBox>
    <Button fx:id="viewButton" alignment="CENTER" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onViewBtnClicked" text="View" VBox.vgrow="ALWAYS" />
-   <TableView>
+   <TableView fx:id="testTableView">
      <columns>
-       <TableColumn prefWidth="75.0" text="Id" />
-       <TableColumn prefWidth="150.0" text="Name" />
+       <TableColumn fx:id="idColumn" prefWidth="75.0" text="Id" />
+       <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Name" />
      </columns>
    </TableView>
 </VBox>

@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class TestDAO {
     //CREATE | Insert
-    private static String insertQuery = "INSERT INTO test_tbl (name) VALUES (%s);";
+    private static String insertQuery = "INSERT INTO test_tbl(name) VALUES ('%s');";
 
     //READ
     private static String readAllQuery = "SELECT * FROM test_tbl";
